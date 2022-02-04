@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int           @id @default(autoincrement())
+  name        String
+  iconName    String?
+  userId      String
+  SubCategory SubCategory[]
+  Expense     Expense[]
+}
+
+model SubCategory {
+  id         Int       @id @default(autoincrement())
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  name       String
+  Expense    Expense[]
+}
+
+model Expense {
+  id            Int          @id @default(autoincrement())
+  category      Category?    @relation(fields: [categoryId], references: [id])
+  categoryId    Int?
+  subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
+  subCategoryId Int?
+  currency      String?      @default("KES")
+  amount        Int
+  date          DateTime     @default(now())
+  userId        String
+  description          String
+}
+
+model Income {
+  id       Int     @id @default(autoincrement())
+  userId   String
+  name     String
+  iconName String?
+  amount   Int?    @default(0)
+}
